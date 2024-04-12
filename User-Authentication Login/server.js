@@ -6,14 +6,16 @@ const fs = require('fs');
 
 const app = express();
 app.use(express.json());
-let users = []
+
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
+
 app.get('/', (req, res) => {
     res.render('index.ejs');
 });
 
 app.get('/users', (req, res) => {
+    let users = []
     try {
         users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
     } catch (error) {
@@ -33,10 +35,15 @@ app.post('/users/register', async (req, res) => {
         console.log(hashedPassword);
         const user = {name:  req.body.name, password: hashedPassword};
 
-        
+        let users = [];
+
         // Read users from the file
         try {
-            users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
+            const fileContent = fs.readFileSync('users.json', 'utf8');
+            users = JSON.parse(fileContent);
+            if (!Array.isArray(users)) {
+                users = [];
+            }
         } catch (error) {
             // If file does not exist, ignore the error
             if (error.code !== 'ENOENT') {
@@ -79,14 +86,14 @@ app.post('/users/login', async (req, res) => {
     }
     try{
       if( await bcrypt.compare(req.body.password, user.password)){
-        res.send('Success');
+        res.redirect('/');
       } else {
         res.send('Not Allowed');
       }
     } catch{
         res.status(500).send();
     }
-
+    
 });
 
 app.listen(3000);
