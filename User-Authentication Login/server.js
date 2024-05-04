@@ -14,6 +14,7 @@ app.get('/', (req, res) => {
     res.render('index.ejs');
 });
 
+
 app.get('/users', (req, res) => {
     let users = []
     try {
@@ -35,7 +36,7 @@ app.post('/users/register', async (req, res) => {
         console.log(hashedPassword);
         const user = {name:  req.body.name, password: hashedPassword};
 
-        let users = [];
+        
 
         // Read users from the file
         try {
@@ -72,7 +73,9 @@ app.post('/users/register', async (req, res) => {
 });
 
 app.post('/users/login', async (req, res) => {
+   let users;
     try {
+       
         users = JSON.parse(fs.readFileSync('users.json', 'utf8'));
     } catch (error) {
         console.error(error);
@@ -96,4 +99,4 @@ app.post('/users/login', async (req, res) => {
     
 });
 
-app.listen(3000);
+app.listen(4000);
